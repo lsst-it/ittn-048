@@ -1,0 +1,74 @@
+\documentclass[PMO,authoryear,toc]{lsstdoc}
+% lsstdoc documentation: https://lsst-texmf.lsst.io/lsstdoc.html
+\input{meta}
+
+% Package imports go here.
+
+% Local commands go here.
+
+%If you want glossaries
+%\input{aglossary.tex}
+%\makeglossaries
+
+\title{CentOS System Disk Encryption}
+
+% Optional subtitle
+% \setDocSubtitle{A subtitle}
+
+\author{%
+Heinrich Reinking
+}
+
+\setDocRef{ITTN-048}
+\setDocUpstreamLocation{\url{https://github.com/lsst-it/ittn-048}}
+
+\date{\vcsDate}
+
+% Optional: name of the document's curator
+% \setDocCurator{The Curator of this Document}
+
+\setDocAbstract{%
+The Linux Unified Key Setup (LUKS) is a disk encryption, which implements a platform-independent standard on-disk format for use in various tools.  
+The Policy-Based Decryption (PBD) is a collection of technologies that enable unlocking encrypted root and secondary volumes of hard drives on physical and virtual machines using different methods like a user password, a Trusted Platform Module (TPM) device, a PKCS#11 device connected to a system, for example, a smart card, or with the help of a special network server.
+The PBD as a technology allows combining different unlocking methods into a policy creating an ability to unlock the same volume in different ways. The current implementation of the PBD in Red Hat Enterprise Linux consists of the Clevis framework and plugins called pins. Each pin provides a separate unlocking capability. For now, the only two pins available are the ones that allow volumes to be unlocked with TPM or with a network server.
+The Network Bound Disc Encryption (NBDE) is a subcategory of the PBD technologies that allows binding the encrypted volumes to a special network server. The current implementation of the NBDE includes Clevis pin for Tang server and the Tang server itself. 
+Based on this tools, the Servers System Disk will we encrypted and when they boot, will request decryption to a centralized server that withholds the Decryption module, avoiding the password prompt at boot. 
+}
+
+% Change history defined here.
+% Order: oldest first.
+% Fields: VERSION, DATE, DESCRIPTION, OWNER NAME.
+% See LPM-51 for version number policy.
+\setDocChangeRecord{%
+  \addtohist{1}{YYYY-MM-DD}{Unreleased.}{Heinrich Reinking}
+}
+
+
+\begin{document}
+
+% Create the title page.
+\maketitle
+% Frequently for a technote we do not want a title page  uncomment this to remove the title page and changelog.
+% use \mkshorttitle to remove the extra pages
+
+% ADD CONTENT HERE
+% You can also use the \input command to include several content files.
+
+\appendix
+% Include all the relevant bib files.
+% https://lsst-texmf.lsst.io/lsstdoc.html#bibliographies
+\section{References} \label{sec:bib}
+\renewcommand{\refname}{} % Suppress default Bibliography section
+\bibliography{local,lsst,lsst-dm,refs_ads,refs,books}
+
+% Make sure lsst-texmf/bin/generateAcronyms.py is in your path
+\section{Acronyms} \label{sec:acronyms}
+\input{acronyms.tex}
+% If you want glossary uncomment below -- comment out the two lines above
+%\printglossaries
+
+
+
+
+
+\end{document}
