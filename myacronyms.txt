@@ -4,3 +4,4 @@
   LUKS:Linux Unified Key Setup
   TPM:Trusted Platform Module
   NBDE:Network Bound Disk Encryption
+  PoC:Proof of Concept
