@@ -5,3 +5,7 @@
   TPM:Trusted Platform Module
   NBDE:Network Bound Disk Encryption
   PoC:Proof of Concept
+  VDA:Virtual Drive A
+  PV:Physical Volume
+  VG:Volume Group
+  LV:Logical Volume
