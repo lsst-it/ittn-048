@@ -1,7 +1,6 @@
-# List acronyms in this file that are not found in lsst-texmf, or that have multiple definitions (put the one you want here).
-#
-# Line format:
-#   ACRONYM:Definition
-#
-# Example:
-#   MIA:Missing In Action
+  OS:Operating System
+  FDE:Full Disk Encryption
+  PBD:Policy-Based Decryption
+  LUKS:Linux Unified Key Setup
+  TPM:Trusted Platform Module
+  NBDE:Network Bound Disk Encryption
