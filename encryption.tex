@@ -1,5 +1,4 @@
 \section{System Disk Encryption}
-
 An encrypted system disk, prevents that the data contained in it can be clone or replicated without the passphrase or authentication server. For this design, the disks will be encrypted through kickstart passphrase and then removed once the remote Tang server are reached, which means, of non-authorized user gains physical access to the server:
 \begin{itemize}
   \item Once the server boots, it will require root credentials.
@@ -28,13 +27,89 @@ Clevis is a pluggable framework for automated decryption. It can be used to prov
 To write: Clevis can subscribe up to 8 keys to 8 different servers/users and it can be restricted to how many of them are required as minimum; by default 1.
 
 
-\subsection{Clevis Puppet Profile and Role}
+\subsection{Clevis Puppet Profile}
+\begin{lstlisting}[language=Java]
+#Clevis Profile
+class profile::core::clevis() {
+  $packages = [
+    'clevis',
+    'clevis-luks',
+    'clevis-dracut'
+  ]
 
+  ##Add require packages
+  package { $packages:
+    ensure => 'present',
+  }
+  ->exec { '/sbin/dracut -f --regenerate-all':
+    path   => ['/usr/bin', '/sbin'],
+    onlyif => 'test ! -f /usr/lib/dracut/modules.d/60clevis/clevis-hook.sh'
+  }
+}
+\end{lstlisting}
+
+This profile install the clevis packages needed to encrypt and manage the LUKS encryption drives. This is not quite required, cause the clevis packages are being installed during provisioning, but, it grant some useful tools like 'cryptosetup' to check the subscribed Tang servers.
 
 \newpage
-\section{Tang Server - Decryption Agent}
+\section{Tang Server - Decryption Server}
 
+\subsection{Tang Service}
+
+Tang \footnote[3]{https://github.com/latchset/tang} is a server for binding data to network presence. In simple terms: you have some data, but you only want it to be available when the system containing the data is on a certain, usually secure, network, This is where Tang comes in.
+First the client gets a list of the Tang server's advertised asymmetric keys. This can happen online by a simple HTTP GET. 
+Second, the client uses one of these public keys to generate a unique, cryptographically strong encryption key. The data is then encrypted using this key. Once the data us encrypted, the key is discarded. Some small metadata is produced as part of this operation which the client should store in a convenient location. This process of encrypting data is the provisioning step.
+Third, when the client is ready to access its data, it simply loads the metadata produced in the provisioning step and performs an HTTP POST in order to recover the encryption key. This process of encrypting data is the provisioning step.
+
+\vskip 2cm
+\begin{figure}
+  \includegraphics[width=14cm]{images/image3.png}
+  \centering
+  \caption{LUKS device interaction with Tang Server}
+\end{figure}
+
+\newpage
 \subsection{Tang Puppet Profile and Role}
+
+\begin{lstlisting}[language=Java]
+#Tang Profile
+class profile::core::tang() {
+  #Variables
+  $packages = ['tang']
+  #Add require packages
+  package { $packages:
+    ensure => 'present',
+  }
+  #Ensure tang service is running
+  service { 'tangd.socket':
+    ensure  => 'running',
+    require => Package[$packages],
+  }
+  #Create tangd.socket override directory
+  file { 'tangd.socket.d':
+    ensure => 'directory',
+    path   => '/etc/systemd/system',
+    mode   => '0755',
+  }
+  #Create override config file
+  file { 'override.conf':
+    ensure  => 'present',
+    path    => '/etc/systemd/system/tangd.socket.d',
+    mode    => '0644',
+    require => File['tangd.socket.d'],
+    content => @(OVERRIDE/L)
+      [Socket]
+      ListenStream=
+      ListenStream=7500
+      | OVERRIDE
+  }
+  ->exec { '/usr/bin/systemctl daemon-reload':
+    refreshonly => true,
+    notify      => Service['tangd.socket']
+  }
+}
+\end{lstlisting}
+
+Tang profile handles the installation of the tangd.socket service, and then modifies it so it listens on port 7500 for incomming connections from clevis-dracut.
 
 \newpage
 \section{Lab Testing - Proof of Concept}
