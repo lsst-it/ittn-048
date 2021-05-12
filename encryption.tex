@@ -131,7 +131,6 @@ logvol /               --vgname=${BOOT_VG} --size=1 --grow --name=root
 \end{lstlisting}
 
 "Encrypted VDA" initialize the System disk with two regular partitions - /boot and /boot/efi - and then a PV, a VG and a LV, been the LV encrypted through LUKS with a temporary password
-\vskip 0.5cm
 \begin{lstlisting}[language=bash]
 ##Kickstart - Encrypted Provisioning Template
 #Packages Section
@@ -159,15 +158,27 @@ In the packages section, clevis-dracut is installed, to then be used at post to 
   \item During partition creation, clevis01 root partition is encrypted through LUKS with the passphrase 'temppass'.
   \item Then at packages, clevis-dracut is installed to then communicate with the Tang servers at post section.
   \item At post, clevis01 subscribes to the Tang servers (tang01.cp.lsst.org and tang02.cp.lsst.org) and the temporary passphrase encryption key is removed as a decryption mechanism.
-  \item The provisioning continues and once concluded, a passphrase prompt is requested. This prompt holds on screen until the network interface is up and communicates to the Tang servers.
 \end{itemize}
+
+\begin{figure}
+  \includegraphics[width=10cm]{images/image4.png}
+  \centering
+  \caption{Booting procedure for an enrolled or newly enrolled client.}
+\end{figure}
+
+\begin{enumerate}
+  \item During boot, the client machine attempts to reach first Tang server.
+  \item If reached, the decryption server hands over the decryption key.
+  \item If the first Tang server wasn't reachable, it attempts with the next one in the key slot.
+  \item The second Tang server sends the decryption key.
+\end{enumerate}
 
 \newpage
 \subsection{Lab Results}
 \begin{itemize}
   \item The encrypted client clevis01 successfully decrypt during dracut by reaching tang01.
   \item The primary Tang server (tang01) was powered off and the client was able to decrypt through tang02.
-  \item Both Tang servers were powered off and the server remains on hold requesting a passphrase (which doesn't exist) until at least one of the Tang servers is back online (see attach Image).
+  \item Both Tang servers were powered off and the server remains on hold requesting a passphrase (which doesn't exist) until at least one of the Tang servers is back online (Figure 3).
   \item For the scope of this PoC, the deletion and recreation of one or both Tang servers was not done, but presumably the client decryption would not happened and the content would be irrecoverable.
   \item One way of handling the loss of all Tang servers, is to add the keys to lsst-private repo, but key rotation is suggested by the documentation to increase safety.
 \end{itemize}
