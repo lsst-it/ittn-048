@@ -24,7 +24,7 @@ FDE works by encrypting every single bit on a storage device, so if the user doe
 \subsection{Clevis}
 
 Clevis is a pluggable framework for automated decryption. It can be used to provide automate decryption of data or even automated unlocking of LUKS volumes \footnote[2]{https://github.com/latchset/clevis}.
-To write: Clevis can subscribe up to 8 keys to 8 different servers/users and it can be restricted to how many of them are required as minimum; by default 1.
+Once Clevis has subscribed the decryption to a server, the encryption passphrase is removed, which means in a lost communication event, the server won't be able to decrypt, not even with the passphrase. To prevent this Clevis can subscribe up to 8 keys to 8 different servers/users and it can be restricted to how many of them are required as minimum. If you set a value t=2, means that at least 2 servers have to be available at the momento of decryption.
 
 
 \subsection{Clevis Puppet Profile}
