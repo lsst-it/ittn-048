@@ -71,40 +71,30 @@ Third, when the client is ready to access its data, it simply loads the metadata
 \subsection{Tang Puppet Profile and Role}
 
 \begin{lstlisting}[language=Java]
-# Tang Profile
+# Tang Server Encryption Module
+
 class profile::core::tang() {
   #Variables
-  $packages = ['tang']
+  $packages = [
+    'tang'
+  ]
+
   #Add require packages
   package { $packages:
     ensure => 'present',
   }
-  #Ensure tang service is running
-  service { 'tangd.socket':
-    ensure  => 'running',
-    require => Package[$packages],
-  }
-  #Create tangd.socket override directory
-  file { 'tangd.socket.d':
-    ensure => 'directory',
-    path   => '/etc/systemd/system',
-    mode   => '0755',
-  }
-  #Create override config file
-  file { 'override.conf':
-    ensure  => 'present',
-    path    => '/etc/systemd/system/tangd.socket.d',
-    mode    => '0644',
-    require => File['tangd.socket.d'],
+
+  systemd::dropin_file {'override.conf':
+    unit    => 'tangd.socket',
     content => @(OVERRIDE/L)
       [Socket]
-      ListenStream=
       ListenStream=7500
       | OVERRIDE
   }
-  ->exec { '/usr/bin/systemctl daemon-reload':
-    refreshonly => true,
-    notify      => Service['tangd.socket']
+  # Ensure tang service is running
+  ->service { 'tangd.socket':
+    ensure  => 'running',
+    require => Package[$packages],
   }
 }
 \end{lstlisting}
@@ -131,7 +121,7 @@ logvol /               --vgname=${BOOT_VG} --size=1 --grow --name=root
 \end{lstlisting}
 
 "Encrypted VDA" initialize the System disk with two regular partitions - /boot and /boot/efi - and then a PV, a VG and a LV, been the LV encrypted through LUKS with a temporary password
-\begin{lstlisting}[language=bash]
+\begin{lstlisting}
 ##Kickstart - Encrypted Provisioning Template
 #Packages Section
 %packages
