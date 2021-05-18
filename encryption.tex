@@ -48,7 +48,7 @@ class profile::core::clevis() {
 }
 \end{lstlisting}
 
-This profile install the clevis packages needed to encrypt and manage the LUKS encryption drives. This is not quite required, cause the clevis packages are being installed during provisioning, but, it grant some useful tools like 'cryptosetup' to check the subscribed Tang servers.
+This profile install the clevis packages needed to encrypt and manage the LUKS encryption drives. This is not quite required, because the clevis packages are being installed during provisioning, but, it grant some useful tools like 'cryptosetup' to check the subscribed Tang servers.
 
 \newpage
 \section{Tang Server - Decryption Server}
@@ -71,7 +71,7 @@ Third, when the client is ready to access its data, it simply loads the metadata
 \subsection{Tang Puppet Profile and Role}
 
 \begin{lstlisting}[language=Java]
-#Tang Profile
+# Tang Profile
 class profile::core::tang() {
   #Variables
   $packages = ['tang']
@@ -141,7 +141,7 @@ clevis-dracut
 curl -sfg http://tang01.cp.lsst.org/adv -o adv1.jws
 clevis luks bind -f -k- -d /dev/vda3 \
 tang '{"url":"http://tang01.cp.lsst.org","adv":"adv1.jws"}' <<< "temppass"
-curl -sfg http://tang02.cp.lsst.org/adv -o adv2.jws
+curl -sf http://tang02.cp.lsst.org/adv -o adv2.jws
 clevis luks bind -f -k- -d /dev/vda3 \
 tang '{"url":"http://tang02.cp.lsst.org","adv":"adv2.jws"}' \ <<< "temppass"
 cryptsetup luksRemoveKey /dev/vda3 <<< "temppass"
