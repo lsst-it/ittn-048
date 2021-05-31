@@ -1,10 +1,9 @@
 \section{System Disk Encryption}
-An encrypted system disk prevents that the data contained in it can be cloned or replicated without the passphrase or authentication server. For this design, the disks will be encrypted through a kickstart passphrase and then removed once the remote Tang server is reached, which means if a non-authorized user gains physical access to the server:
+An encrypted system disk prevents that the data contained in it can be cloned or replicated without the passphrase or authentication server. For this design, the disks will be encrypted through a kickstart passphrase and then removed once the remote Tang server is reached. If a non-authorized user gains physical access to the server:
 \begin{itemize}
-  \item Once the server boots, it will require root credentials.
   \item If halted and attempted to change the root password, the encryption passphrase prompt will be requested - which was deleted.
   \item If booted through a Live USB OS, the encrypted partitions remain unreadable.
-  \item If the drive is taken, the disk's data remains cyphered.
+  \item If the drive is removed/stolen, the disk's data remains cyphered.
 \end{itemize}
 
 \newpage
@@ -108,14 +107,15 @@ Since the drive must be encrypted with LUKS early during the provisioning, new K
 
 \vskip 0.5cm
 \begin{lstlisting}[language=bash]
-#Encrypted VDA - Partition Table
+#  Encrypted VDA - Partition Table
 
 ignoredisk --only-use=${BOOT_DEV}
 zerombr
 clearpart --drives=${BOOT_DEV} --all --initlabel
 part /boot     --size=1024 --asprimary --ondrive=${BOOT_DEV}
 part /boot/efi --size=200  --asprimary --ondrive=${BOOT_DEV} --fstype=efi
-part pv.boot   --size=1 --grow  --encrypted --passphrase=temppass --ondisk=${BOOT_DEV}
+#  Use an easy passphrase, it will be removed one step later
+part pv.boot   --size=1 --grow  --encrypted --passphrase=******** --ondisk=${BOOT_DEV}
 volgroup ${BOOT_VG} pv.boot
 logvol /               --vgname=${BOOT_VG} --size=1 --grow --name=root
 \end{lstlisting}
@@ -126,15 +126,15 @@ logvol /               --vgname=${BOOT_VG} --size=1 --grow --name=root
 #Packages Section
 %packages
 clevis-dracut
-#Post Section
+#Post Section - At ******** use the same passphrase written at the Partition Table
 %post --log=/mnt/sysimage/root/install.post.log
 curl -sfg http://tang01.cp.lsst.org/adv -o adv1.jws
 clevis luks bind -f -k- -d /dev/vda3 \
-tang '{"url":"http://tang01.cp.lsst.org","adv":"adv1.jws"}' <<< "temppass"
+tang '{"url":"http://tang01.cp.lsst.org","adv":"adv1.jws"}' <<< "********"
 curl -sf http://tang02.cp.lsst.org/adv -o adv2.jws
 clevis luks bind -f -k- -d /dev/vda3 \
-tang '{"url":"http://tang02.cp.lsst.org","adv":"adv2.jws"}' \ <<< "temppass"
-cryptsetup luksRemoveKey /dev/vda3 <<< "temppass"
+tang '{"url":"http://tang02.cp.lsst.org","adv":"adv2.jws"}' \ <<< "********"
+cryptsetup luksRemoveKey /dev/vda3 <<< "********"
 \end{lstlisting}
 
 In the packages section, clevis-dracut is installed, to then be used at post to communicate with a Tang server(s), subscribe to them and remove the temporary password.
@@ -145,7 +145,7 @@ In the packages section, clevis-dracut is installed, to then be used at post to 
   \item Two Tang servers using the tang puppet profile.
   \item A client with the clevis puppet profile.
   \item The client VM (clevis01.cp.lsst.org) is provisioned through PXE with 'Encrypted VDA' Partitioning Table and 'Kickstart Encrypted Provisioning Template'.
-  \item During partition creation, clevis01 root partition is encrypted through LUKS with the passphrase 'temppass'.
+  \item During partition creation, clevis01 root partition is encrypted through LUKS with a passphrase.
   \item Then at packages, clevis-dracut is installed to then communicate with the Tang servers at post section.
   \item At post, clevis01 subscribes to the Tang servers (tang01.cp.lsst.org and tang02.cp.lsst.org) and the temporary passphrase encryption key is removed as a decryption mechanism.
 \end{itemize}
@@ -188,5 +188,3 @@ In the packages section, clevis-dracut is installed, to then be used at post to 
   \item For the scope of this PoC, the deletion and recreation of one or both Tang servers was not done, but presumably, the client decryption would not happen and the content would be irrecoverable.
   \item One way of handling the loss of all Tang servers is to add the keys to lsst-private repo, but key rotation is suggested by the documentation to increase safety.
 \end{itemize}
-
-\newpage
