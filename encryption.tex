@@ -1,8 +1,8 @@
 \section{System Disk Encryption}
-An encrypted system disk, prevents that the data contained in it can be clone or replicated without the passphrase or authentication server. For this design, the disks will be encrypted through kickstart passphrase and then removed once the remote Tang server are reached, which means, of non-authorized user gains physical access to the server:
+An encrypted system disk, prevents that the data contained in it can be cloned or replicated without the passphrase or authentication server. For this design, the disks will be encrypted through a kickstart passphrase and then removed once the remote Tang server is reached, which means, if a non-authorized user gains physical access to the server:
 \begin{itemize}
   \item Once the server boots, it will require root credentials.
-  \item If halted and attempt to change the root password, the encryption passphrase prompt will be requested - which was deleted.
+  \item If halted and attempted to change the root password, the encryption passphrase prompt will be requested - which was deleted.
   \item If booted through a Live USB OS, the encrypted partitions remain unreadable.
   \item If the drive is taken, the disk would never gain access to its content.
 \end{itemize}
