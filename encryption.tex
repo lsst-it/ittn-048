@@ -180,11 +180,88 @@ In the packages section, clevis-dracut is installed, to then be used at post to 
 \end{figure}
 
 \newpage
+\subsection{Performance Test}
+Besides securing your data, Encryption has an impact on performance as well. Every written bit of data has to be encrypted before written on disk, which impacts both the CPU and the Disk I/O. In modern CPU architectures, the impact is not as much as it was in the past, but disks do suffer consequences.
+To test the performance impact of encryption, we are going to use \textbf{\textit{sysbench}}, an open-source tool that performs series of tests to verify systems under intensive load. To have a baseline, two CentOS VM, with the same specs, were deployed: one encrypted with LUKS and a regular not encrypted one.
+\subsubsection{CPU Benchmark}
+\begin{center}
+  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)  
+  Running the test with following options:
+  Number of threads: 1
+  Initializing random number generator
+  from current time
+  Prime numbers limit: 20000
+  Initializing worker threads...
+  Threads started!
+  
+  CPU speed:
+    events per second:   314.14
+  
+  General statistics:
+    total time:               10.0028s
+    total number of events:   3143
+  
+    Latency (ms):
+      min:                 3.16
+      avg:                 3.18
+      max:                 5.40
+      95th percentile:     3.19
+      sum:                 10000.49 
+  Threads fairness:
+    events (avg/stddev):         3143.0000/0.00
+    execution time (avg/stddev): 10.0005/0.00        
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+  Running the test with following options:
+  Number of threads: 1
+  Initializing random number generator
+  from current time
+  Prime numbers limit: 20000
+  Initializing worker threads...
+  Threads started!
+
+  CPU speed:
+    events per second:   314.05
+
+  General statistics:
+    total time:              10.0025s
+    total number of events:  3142
+
+    Latency (ms):
+        min:               3.16
+        avg:               3.18
+        max:               5.21
+        95th percentile:   3.19
+        sum:               9995.36
+  Threads fairness:
+    events (avg/stddev):         3142.0000/0.00
+    execution time (avg/stddev): 9.9954/0.00
+  \end{lstlisting}
+\end{minipage}
+
+The results help us know that the CPU architecture, threads, and processing are the same for both VM, which will help us determine the accuracy from the following tests.
+\newpage
+\subsubsection{Disk Benchmark}
+
+\newpage
 \subsection{Conclusions - Pros and Cons}
 \begin{itemize}
   \item The encrypted client clevis01 successfully decrypt during dracut by reaching tang01.
   \item The primary Tang server (tang01) was powered off and the client was able to decrypt through tang02.
-  \item Both Tang servers were powered off and the server remains on hold requesting a passphrase (which doesn't exist) until at least one of the Tang servers is back online (Figure 3).
   \item For the scope of this PoC, the deletion and recreation of one or both Tang servers was not done, but presumably, the client decryption would not happen and the content would be irrecoverable.
   \item One way of handling the loss of all Tang servers is to add the keys to lsst-private repo, but key rotation is suggested by the documentation to increase safety.
 \end{itemize}
