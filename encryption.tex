@@ -180,7 +180,7 @@ In the packages section, clevis-dracut is installed, to then be used at post to 
 \end{figure}
 
 \newpage
-\subsection{Performance Test}
+\subsection{Performance Test - Virtual Drive over HDD}
 Besides securing your data, Encryption has an impact on performance as well. Every written bit of data has to be encrypted before written on disk, which impacts both the CPU and the Disk I/O. In modern CPU architectures, the impact is not as much as it was in the past, but disks do suffer consequences.
 To test the performance impact of encryption, we are going to use \textbf{\textit{sysbench}}, an open-source tool that performs series of tests to verify systems under intensive load. To have a baseline, two CentOS VM, with the same specs, were deployed: one encrypted with LUKS and a regular not encrypted one.
 \subsubsection{CPU Benchmark}
