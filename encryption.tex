@@ -180,11 +180,313 @@ In the packages section, clevis-dracut is installed, to then be used at post to 
 \end{figure}
 
 \newpage
+\subsection{Performance Test - Virtual Drive over HDD}
+Besides securing your data, Encryption has an impact on performance as well. Every written bit of data has to be encrypted before written on disk, which impacts both the CPU and the Disk I/O. In modern CPU architectures, the impact is not as much as it was in the past, but disks do suffer consequences.
+To test the performance impact of encryption, we are going to use \textbf{\textit{sysbench}}, an open-source tool that performs series of tests to verify systems under intensive load. To have a baseline, two CentOS VM, with the same specs, were deployed: one encrypted with LUKS and a regular not encrypted one.
+\subsubsection{CPU Benchmark}
+\begin{center}
+  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)  
+  Running the test with following options:
+  Number of threads: 1
+  Initializing random number generator
+  from current time
+  Prime numbers limit: 20000
+  Initializing worker threads...
+  Threads started!
+  
+  CPU speed:
+    events per second:   314.14
+  
+  General statistics:
+    total time:               10.0028s
+    total number of events:   3143
+  
+    Latency (ms):
+      min:                 3.16
+      avg:                 3.18
+      max:                 5.40
+      95th percentile:     3.19
+      sum:                 10000.49 
+  Threads fairness:
+    events (avg/stddev):         3143.0000/0.00
+    execution time (avg/stddev): 10.0005/0.00        
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+  Running the test with following options:
+  Number of threads: 1
+  Initializing random number generator
+  from current time
+  Prime numbers limit: 20000
+  Initializing worker threads...
+  Threads started!
+
+  CPU speed:
+    events per second:   314.05
+
+  General statistics:
+    total time:              10.0025s
+    total number of events:  3142
+
+    Latency (ms):
+        min:               3.16
+        avg:               3.18
+        max:               5.21
+        95th percentile:   3.19
+        sum:               9995.36
+  Threads fairness:
+    events (avg/stddev):         3142.0000/0.00
+    execution time (avg/stddev): 9.9954/0.00
+  \end{lstlisting}
+\end{minipage}
+
+The results help us know that the CPU architecture, threads, and processing are the same for both VM, which will help us determine the accuracy for the following tests.
+\newpage
+\subsubsection{Disk Benchmark}
+\begin{center}
+  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+
+  24 files, 1310720Kb each, 30720Mb total
+  Creating files for the test...
+  Extra file open flags: (none)
+  Creating file test_file.0
+  Creating file test_file.1
+  Creating file test_file.2
+  Creating file test_file.3
+  Creating file test_file.4
+  Creating file test_file.5
+  Creating file test_file.6
+  Creating file test_file.7
+  Creating file test_file.8
+  Creating file test_file.9
+  Creating file test_file.10
+  Creating file test_file.11
+  Creating file test_file.12
+  Creating file test_file.13
+  Creating file test_file.14
+  Creating file test_file.15
+  Creating file test_file.16
+  Creating file test_file.17
+  Creating file test_file.18
+  Creating file test_file.19
+  Creating file test_file.20
+  Creating file test_file.21
+  Creating file test_file.22
+  Creating file test_file.23
+  32212254720 bytes written in 244.25 seconds (125.77 MiB/sec).
+  
+  real	4m4.275s
+  user	0m1.205s
+  sys	0m46.108s
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+
+  24 files, 1310720Kb each, 30720Mb total
+  Creating files for the test...
+  Extra file open flags: (none)
+  Creating file test_file.0
+  Creating file test_file.1
+  Creating file test_file.2
+  Creating file test_file.3
+  Creating file test_file.4
+  Creating file test_file.5
+  Creating file test_file.6
+  Creating file test_file.7
+  Creating file test_file.8
+  Creating file test_file.9
+  Creating file test_file.10
+  Creating file test_file.11
+  Creating file test_file.12
+  Creating file test_file.13
+  Creating file test_file.14
+  Creating file test_file.15
+  Creating file test_file.16
+  Creating file test_file.17
+  Creating file test_file.18
+  Creating file test_file.19
+  Creating file test_file.20
+  Creating file test_file.21
+  Creating file test_file.22
+  Creating file test_file.23
+  32212254720 bytes written in 105.24 seconds (291.91 MiB/sec).
+  
+  real	1m45.253s
+  user	0m1.201s
+  sys	0m50.978s
+  \end{lstlisting}
+\end{minipage}
+
+First, there is a preparation stage, in which several files are created, so they can be then moved, synced, copied, and deleted. Based on this operations, \textbf{\textit{sysbench}} will reflect the Disk IO times.
+Yet, it is important to notice that for only writing the files, the Encrypted vs Not-Encryption rates are significantly impact: while the Not-Encrypted had a rate of 291.91 [MiB/sec], the Encrypted one was only 125.77 [MiB/sec], which result in almost tripling the amount of time required to write 30 GB.
+
+\newpage
+\begin{center}
+  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Number of threads: 16
+  24 files, 1.25GiB each
+  30GiB total file size
+  Block size 16KiB
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  Threads started!
+
+  File operations:
+      reads/s:                      2755.75
+      writes/s:                     2755.75
+      fsyncs/s:                     1322.96
+  
+  Throughput:
+      read, MiB/s:                  43.06
+      written, MiB/s:               43.06
+  
+  General statistics:
+      total time:                   1800.0206s
+      total number of events:       12301839
+  Latency (ms):
+            min:                     0.00
+            avg:                     2.34
+            max:                     429.07
+            95th percentile:         8.74
+            sum:                     28757517.82
+  
+  Threads fairness:
+    events (avg/stddev):         768864.9375/3513.22
+    execution time (avg/stddev): 1797.3449/0.09
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Number of threads: 16
+  24 files, 1.25GiB each
+  30GiB total file size
+  Block size 16KiB
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  Threads started!
+
+  File operations:
+      reads/s:                      6842.16
+      writes/s:                     6842.16
+      fsyncs/s:                     3284.45
+  
+  Throughput:
+      read, MiB/s:                  106.91
+      written, MiB/s:               106.91
+  
+  General statistics:
+      total time:                   1800.0121s
+      total number of events:       30543674
+  Latency (ms):
+            min:                     0.00
+            avg:                     0.94
+            max:                     536.87
+            95th percentile:         3.36
+            sum:                     28764555.92
+  
+  Threads fairness:
+    events (avg/stddev):         1908979.6250/7247.20
+    execution time (avg/stddev): 1797.7847/0.04
+  \end{lstlisting}
+\end{minipage}
+
+
+\begin{figure}
+  \includegraphics[width=10cm]{images/image5.png}
+  \centering
+  \caption{CPU Load while running sysbench}
+\end{figure}
+
+\newpage
+To get a more clear view of the performance results, let's arrange them in a more comfortable way:
+
+\begin{center}
+  \tiny
+  \begin{tabular}{||c c c c c||}
+    \hline
+    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
+    \hline
+    \multirow{3}{4em}{File Operations} & reads/s & 2755.75 & 6842.16 & 40.28 \\
+    & writes/s & 2755.75 & 6842.16 & 40.28 \\
+    & fsyncs/s & 1322.96 & 3284.45 & 40,28 \\
+    \hline
+    \multirow{2}{4em}{Throughput} & reads MiB/s & 43.06 & 106.91 & 40.28 \\
+    & written MiB/s & 43.06 & 106.91 & 40,28 \\
+    \hline
+    \multirow{2}{4em}{General Stadistics} & total time & 1800.0206[s] & 1800.0121[s] & 100.1 \\
+    & total number of events & 12301839 & 30543674 & 40.28 \\
+    \hline
+    \multirow{5}{4em}{Latency} & min & 0 & 0 & 0 \\
+    & avg & 2.34 & 0.94 & 40,17 \\
+    & max & 249.07 & 536.87 & 46,4 \\
+    & 95th Percentile & 8.74 & 3.36 & 38,44 \\
+    & sum & 28757517.82 & 28764555.92 & 100,02 \\
+    \hline
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & 768864.9375/3513.22 & 1908979.6250/7247.20 & 40.28/48.48 \\
+    & execution time (avg/stddev) & 1797.3449/0.09 & 1797.7847/0.04 & 100.02/44.44 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+As shown in Figure 5, during the performance test at the Encrypted VM, the load on the CPU was so high (18.28) that the ssh connection was terminated and the network connection lost. As far as the results goes:
+\begin{itemize}
+  \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~40.3 percent due to encryption.
+  \item \textbf{Throughput:} lost a ~40.3 percentage both at write and read operations while Encrypting.
+  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur, shows that in the same amount of time, ~40.3 percentage more events happened at the Not-Encrypted VM.
+  \item \textbf{Latency:} In the same time period, the Encrypted vs Not-Encrypted suffered a ~40.17 percentage more latency.
+  \item \textbf{Threads Fairness:} The number of events per thread, were ~40.28 percent higher in a Not-Encrypted system than in an Encrypted one.
+\end{itemize}
+
+\newpage
 \subsection{Conclusions - Pros and Cons}
 \begin{itemize}
+  \item Encrypting a system, results in average a 40 percent payload over the read/write operations.
   \item The encrypted client clevis01 successfully decrypt during dracut by reaching tang01.
   \item The primary Tang server (tang01) was powered off and the client was able to decrypt through tang02.
-  \item Both Tang servers were powered off and the server remains on hold requesting a passphrase (which doesn't exist) until at least one of the Tang servers is back online (Figure 3).
   \item For the scope of this PoC, the deletion and recreation of one or both Tang servers was not done, but presumably, the client decryption would not happen and the content would be irrecoverable.
   \item One way of handling the loss of all Tang servers is to add the keys to lsst-private repo, but key rotation is suggested by the documentation to increase safety.
 \end{itemize}
