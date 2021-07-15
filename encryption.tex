@@ -105,7 +105,7 @@ Tang profile handles the installation of the tangd.socket service, and then modi
 \subsection{Kickstart Modifications - Use of Encryption in Provisioning Template}
 Since the drive must be encrypted with LUKS early during the provisioning, new Kickstart Provisioning Template and Partition Tables had to be created at Foreman.
 
-\vskip 0.5cm
+\vspace*{0.1mm}
 \begin{lstlisting}[language=bash]
 #  Encrypted VDA - Partition Table
 
@@ -119,8 +119,9 @@ part pv.boot   --size=1 --grow  --encrypted --passphrase=******** --ondisk=${BOO
 volgroup ${BOOT_VG} pv.boot
 logvol /               --vgname=${BOOT_VG} --size=1 --grow --name=root
 \end{lstlisting}
-
+\vspace*{0.1mm}
 "Encrypted VDA" initialize the System disk with two regular partitions - /boot and /boot/efi - and then a PV, a VG and a LV, been the LV encrypted through LUKS with a temporary password
+\vspace*{0.1mm}
 \begin{lstlisting}
 ##Kickstart - Encrypted Provisioning Template
 #Packages Section
@@ -136,7 +137,7 @@ clevis luks bind -f -k- -d /dev/vda3 \
 tang '{"url":"http://tang02.cp.lsst.org","adv":"adv2.jws"}' \ <<< "********"
 cryptsetup luksRemoveKey /dev/vda3 <<< "********"
 \end{lstlisting}
-
+\vspace*{0.1mm}
 In the packages section, clevis-dracut is installed, to then be used at post to communicate with a Tang server(s), subscribe to them and remove the temporary password.
 
 \newpage
