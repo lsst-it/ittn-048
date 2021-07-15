@@ -108,7 +108,6 @@ Since the drive must be encrypted with LUKS early during the provisioning, new K
 \vspace*{0.1mm}
 \begin{lstlisting}[language=bash]
 #  Encrypted VDA - Partition Table
-
 ignoredisk --only-use=${BOOT_DEV}
 zerombr
 clearpart --drives=${BOOT_DEV} --all --initlabel
