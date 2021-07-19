@@ -482,11 +482,383 @@ As shown in Figure 5, during the performance test at the Encrypted VM, the load 
 \end{itemize}
 
 \newpage
-\subsection{Conclusions - Pros and Cons}
+\subsection{HDD Conclusions - Pros and Cons}
 \begin{itemize}
   \item Encrypting a system, results in average a 40 percent payload over the read/write operations.
   \item The encrypted client clevis01 successfully decrypt during dracut by reaching tang01.
   \item The primary Tang server (tang01) was powered off and the client was able to decrypt through tang02.
   \item For the scope of this PoC, the deletion and recreation of one or both Tang servers was not done, but presumably, the client decryption would not happen and the content would be irrecoverable.
   \item One way of handling the loss of all Tang servers is to add the keys to lsst-private repo, but key rotation is suggested by the documentation to increase safety.
+\end{itemize}
+
+\newpage
+\subsection{Performance Test - Virtual Drive over GPFS}
+\subsubsection{CPU Benchmark}
+\begin{center}
+  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content      
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\subsubsection{Disk Benchmark}
+\begin{center}
+  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\begin{center}
+  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+
+\begin{figure}
+  \includegraphics[width=10cm]{images/image5.png}
+  \centering
+  \caption{CPU Load while running sysbench}
+\end{figure}
+
+\newpage
+To get a more clear view of the performance results, let's arrange them in a more comfortable way:
+
+\begin{center}
+  \tiny
+  \begin{tabular}{||c c c c c||}
+    \hline
+    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
+    \hline
+    \multirow{3}{4em}{File Operations} & reads/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & writes/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    & fsyncs/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Throughput} & reads MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & written MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{General Stadistics} & total time & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & total number of events & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{5}{4em}{Latency} & min & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & avg & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & max & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & 95th Percentile & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & sum & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    & execution time (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+Impact
+\begin{itemize}
+  \item \textbf{Files Operations:} 
+  \item \textbf{Throughput:} 
+  \item \textbf{General Statistics:}
+  \item \textbf{Latency:}
+  \item \textbf{Threads Fairness:}
+\end{itemize}
+
+\newpage
+\subsection{GPFS Conclusions - Pros and Cons}
+\begin{itemize}
+  \item First
+  \item Second
+  \item Third...
+\end{itemize}
+
+\newpage
+\subsection{Performance Test - Virtual Drive over SDD}
+\subsubsection{CPU Benchmark}
+\begin{center}
+  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content      
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\subsubsection{Disk Benchmark}
+\begin{center}
+  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\begin{center}
+  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+
+\begin{figure}
+  \includegraphics[width=10cm]{images/image5.png}
+  \centering
+  \caption{CPU Load while running sysbench}
+\end{figure}
+
+\newpage
+To get a more clear view of the performance results, let's arrange them in a more comfortable way:
+
+\begin{center}
+  \tiny
+  \begin{tabular}{||c c c c c||}
+    \hline
+    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
+    \hline
+    \multirow{3}{4em}{File Operations} & reads/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & writes/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    & fsyncs/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Throughput} & reads MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & written MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{General Stadistics} & total time & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & total number of events & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{5}{4em}{Latency} & min & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & avg & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & max & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & 95th Percentile & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & sum & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    & execution time (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+Impact
+\begin{itemize}
+  \item \textbf{Files Operations:} 
+  \item \textbf{Throughput:} 
+  \item \textbf{General Statistics:}
+  \item \textbf{Latency:}
+  \item \textbf{Threads Fairness:}
+\end{itemize}
+
+\newpage
+\subsection{SDD Conclusions - Pros and Cons}
+\begin{itemize}
+  \item First
+  \item Second
+  \item Third...
+\end{itemize}
+
+\newpage
+\subsection{Performance Test - Virtual Drive over NVMe}
+\subsubsection{CPU Benchmark}
+\begin{center}
+  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content      
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\subsubsection{Disk Benchmark}
+\begin{center}
+  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\begin{center}
+  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \lstset{language=bash,label=SliceExaple}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Test Content
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Test Content  
+  \end{lstlisting}
+\end{minipage}
+
+
+\begin{figure}
+  \includegraphics[width=10cm]{images/image5.png}
+  \centering
+  \caption{CPU Load while running sysbench}
+\end{figure}
+
+\newpage
+To get a more clear view of the performance results, let's arrange them in a more comfortable way:
+
+\begin{center}
+  \tiny
+  \begin{tabular}{||c c c c c||}
+    \hline
+    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
+    \hline
+    \multirow{3}{4em}{File Operations} & reads/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & writes/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    & fsyncs/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Throughput} & reads MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & written MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{General Stadistics} & total time & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & total number of events & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{5}{4em}{Latency} & min & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & avg & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & max & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & 95th Percentile & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    & sum & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    & execution time (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+Impact
+\begin{itemize}
+  \item \textbf{Files Operations:} 
+  \item \textbf{Throughput:} 
+  \item \textbf{General Statistics:}
+  \item \textbf{Latency:}
+  \item \textbf{Threads Fairness:}
+\end{itemize}
+
+\newpage
+\subsection{NVMe Conclusions - Pros and Cons}
+\begin{itemize}
+  \item First
+  \item Second
+  \item Third...
 \end{itemize}
