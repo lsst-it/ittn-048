@@ -191,7 +191,6 @@ To test the performance impact of encryption, we are going to use \textbf{\texti
 \noindent\begin{minipage}[t]{0.45\linewidth}
   \centering
   \textit{Encrypted}
-  \lstset{language=bash,label=SliceExaple}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
   sysbench 1.0.17 (using system LuaJIT 2.0.4)  
   Running the test with following options:
@@ -263,7 +262,6 @@ The results help us know that the CPU architecture, threads, and processing are 
 \noindent\begin{minipage}[t]{0.45\linewidth}
   \centering
   \textit{Encrypted}
-  \lstset{language=bash,label=SliceExaple}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
   sysbench 1.0.17 (using system LuaJIT 2.0.4)
 
@@ -354,7 +352,6 @@ Yet, it is important to notice that for only writing the files, the Encrypted vs
 \noindent\begin{minipage}[t]{0.45\linewidth}
   \centering
   \textit{Encrypted}
-  \lstset{language=bash,label=SliceExaple}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
   Number of threads: 16
   24 files, 1.25GiB each
@@ -489,6 +486,250 @@ As shown in Figure 5, during the performance test at the Encrypted VM, the load 
   \item The primary Tang server (tang01) was powered off and the client was able to decrypt through tang02.
   \item For the scope of this PoC, the deletion and recreation of one or both Tang servers was not done, but presumably, the client decryption would not happen and the content would be irrecoverable.
   \item One way of handling the loss of all Tang servers is to add the keys to lsst-private repo, but key rotation is suggested by the documentation to increase safety.
+\end{itemize}
+
+\newpage
+\subsection{Performance Test - Virtual Drive over GPFS/Gluster}
+General Parallel File System \footnote[1]{https://es.wikipedia.org/wiki/General\_Parallel\_File\_System} is a high-performance clustered file system software developed by IBM. It provides concurrent, high-speed file access to applications executing on multiple nodes of clusters.
+Gluster \footnote[2]{https://docs.gluster.org/en/latest/} is a scalable network filesystem suitable for data-intensive tasks such as cloud storage and media streaming. It is free and open-source and can utilize standard hardware. 
+Since GPFS is not an open-source solution, it can not be tested for encryption performance, but GlusterFS offers the same suitable performance attributes from GPFS, and it can be easily mounted and tested. Then, for the GPFS Encryption Test, we are going to try a VM over a GlusterFS.
+
+\subsubsection{Environment Setup - GlusterFS}
+\begin{itemize}
+  \item Over one ESXi hypervisor, with HDD storage, three VMs were deployed: gluster01, gluster02, and gluster03.
+  \item Each VM has a 50GB storage partition and a replica three configuration, which means that meanwhile, one VM is still running, the data will be accessible. 
+  \item A glusterFS pool was generated and then mounted into another ESXi hypervisor through NFS.
+  \item The performance tests were performed simultaneously in both VMs (encrypted and not-encrypted) to hit as much as possible the gluster storage.
+\end{itemize}
+\newpage
+\subsubsection{CPU Benchmark}
+\begin{center}
+  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Number of threads: 1
+  Prime numbers limit: 20000
+  Initializing worker threads...
+  CPU speed:
+      events per second:   350.74
+  General statistics:
+      total time:                          10.0028s
+      total number of events:              3509
+  Latency (ms):
+      min:                                    2.76
+      avg:                                    2.85
+      max:                                    3.33
+      95th percentile:                        2.97
+      sum:                                10000.15
+  Threads fairness:
+      events (avg/stddev):           3509.0000/0.00
+      execution time (avg/stddev):   10.0001/0.00
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Number of threads: 1
+  Prime numbers limit: 20000
+  Initializing worker threads...
+  CPU speed:
+      events per second:   329.91
+  General statistics:
+      total time:                          10.0007s
+      total number of events:              3300
+  Latency (ms):
+      min:                                    2.76
+      avg:                                    3.03
+      max:                                    7.87
+      95th percentile:                        3.02
+      sum:                                 9997.00
+  Threads fairness:
+      events (avg/stddev):           3300.0000/0.00
+      execution time (avg/stddev):   9.9970/0.00
+  \end{lstlisting}
+\end{minipage}
+
+\subsubsection{Disk Benchmark}
+\begin{center}
+  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  24 files, 655360Kb each, 15360Mb total
+  Creating files for the test...
+  Creating file test_file.0
+  Creating file test_file.1
+  #
+  #OMITTING OUTPUT FROM
+  #FILE2 TO FILE21
+  #
+  Creating file test_file.22
+  Creating file test_file.23
+  16106127360 bytes written in 505.82 seconds (30.37 MiB/sec).
+  
+  real    8m25.865s
+  user    0m0.385s
+  sys     0m19.232s
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  24 files, 655360Kb each, 15360Mb total
+  Creating files for the test...
+  Creating file test_file.0
+  Creating file test_file.1
+  #
+  #OMITTING OUTPUT FROM
+  #FILE2 TO FILE21
+  #
+  Creating file test_file.22
+  Creating file test_file.23
+  16106127360 bytes written in 504.78 seconds (30.43 MiB/sec).
+  
+  real	8m25.183s
+  user	0m0.360s
+  sys	  0m20.746s    
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+\begin{center}
+  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
+\end{center}
+\vspace*{-\baselineskip}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
+  Running the test with following options:
+  Number of threads: 16
+  Initializing random number generator from current time
+  24 files, 640MiB each
+  15GiB total file size
+  Block size 16KiB
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  Threads started!
+  File operations:
+      reads/s:                      74.55
+      writes/s:                     74.55
+      fsyncs/s:                     36.00
+  Throughput:
+      read, MiB/s:                  1.16
+      written, MiB/s:               1.16
+  General statistics:
+      total time:                          1800.1486s
+      total number of events:              332823
+  Latency (ms):
+      min:                                    0.00
+      avg:                                   86.54
+      max:                                 1212.47
+      95th percentile:                      363.18
+      sum:                             28800880.92
+  Threads fairness:
+      events (avg/stddev):           20801.4375/174.99
+      execution time (avg/stddev):   1800.0551/0.01
+  \end{lstlisting}
+\end{minipage}
+\hspace{0.5cm}
+\noindent\begin{minipage}[t]{0.45\linewidth}
+  \centering
+  \textit{Not-Encrypted}
+  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Running the test with following options:
+  Number of threads: 16
+  Initializing random number generator from current time
+  24 files, 640MiB each
+  15GiB total file size
+  Block size 16KiB
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  Threads started!
+  File operations:
+      reads/s:                      76.57
+      writes/s:                     76.56
+      fsyncs/s:                     36.95
+  Throughput:
+      read, MiB/s:                  1.20
+      written, MiB/s:               1.20
+  General statistics:
+      total time:                          1800.4639s
+      total number of events:              341849
+  Latency (ms):
+      min:                                    0.00
+      avg:                                   84.25
+      max:                                 1261.22
+      95th percentile:                      363.18
+      sum:                             28801639.84
+  Threads fairness:
+      events (avg/stddev):           21365.5625/138.94
+      execution time (avg/stddev):   1800.1025/0.00
+  \end{lstlisting}
+\end{minipage}
+
+\newpage
+Table Comparison 
+\begin{center}
+  \tiny
+  \begin{tabular}{||c c c c c||}
+    \hline
+    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
+    \hline
+    \multirow{3}{4em}{File Operations} & reads/s & 74.55 & 76.57 & PERCENTAGE \\
+    & writes/s & 74.55 & 76.56 & PERCENTAGE \\
+    & fsyncs/s & 36.00 & 36.95 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Throughput} & reads MiB/s & 1.16 & 1.20 & PERCENTAGE \\
+    & written MiB/s & 1.16 & 1.20 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{General Stadistics} & total time & 1800.1486s & 1800.4639s & PERCENTAGE \\
+    & total number of events & 332823 & 143849 & PERCENTAGE \\
+    \hline
+    \multirow{5}{4em}{Latency} & min & 0.00 & 0.00 & 0 \\
+    & avg & 86.54 & 84.25 & PERCENTAGE \\
+    & max & 1212.47 & 1261.22 & PERCENTAGE \\
+    & 95th Percentile & 363.18 & 363.18 & PERCENTAGE \\
+    & sum & 28800880.92 & 28801639.84 & PERCENTAGE \\
+    \hline
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & 20801.4375/174.99 & 21365.5624/138.94 & NUMBER1/NUMBER2 \\
+    & execution time (avg/stddev) & 1800.0551/0.01 & 1800.1025/0.00 & NUMBER1/NUMBER2 \\
+    \hline
+  \end{tabular}
+\end{center}
+
+\begin{itemize}
+  \item \textbf{Files Operations:} 
+  \item \textbf{Throughput:} 
+  \item \textbf{General Statistics:}
+  \item \textbf{Latency:}
+  \item \textbf{Threads Fairness:}
+\end{itemize}
+
+\subsection{GPFS Conclusions - Pros and Cons}
+\begin{itemize}
+  \item First
+  \item Second
+  \item Third...
 \end{itemize}
 
 \newpage
@@ -733,303 +974,6 @@ Impact
 
 \newpage
 \subsection{NVMe Conclusions - Pros and Cons}
-\begin{itemize}
-  \item First
-  \item Second
-  \item Third...
-\end{itemize}
-
-\newpage
-\subsection{Performance Test - Virtual Drive over GPFS (GlusterFS))}
-General Parallel File System\footnote[1]{https://es.wikipedia.org/wiki/General_Parallel_File_System}(GPFS) is a high-performance clustered file system software developed by IBM. It provides concurrent, high-speed file access to applications executing on multiple nodes of clusters.
-Gluster\footnote[2]{https://docs.gluster.org/en/latest/} is a scalable network filesystem suitable for data-intensive tasks such as cloud storage and media streaming. It is free and open-source and can utilize standard hardware. 
-Since GPFS is not an open-source solution, it can not be tested for encryption performance, but GlusterFS offers the same suitable performance attributes from GPFS, and it can be easily mounted and tested. Then, for the GPFS Encryption Test, we are going to try a VM over a GlusterFS.
-
-\subsubsection{Environment Setup - GlusterFS}
-Gluster Pool creation:
-\begin{itemize}
-  \item Over one ESXi hypervisor, with HDD storage, three VMs were deployed: gluster01, gluster02, and gluster03.
-  \item Each VM has a 50GB storage partition and a replica three configuration, which means that meanwhile, one VM is still running, the data will be accessible. 
-  \item A glusterFS pool was generated and then mounted into another ESXi hypervisor through NFS.
-  \item The performance tests were performed simultaneously in both VMs (encrypted and not-encrypted) to hit as much as possible the gluster storage.
-\end{itemize}
-\subsubsection{CPU Benchmark}
-\begin{center}
-  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
-\end{center}
-\vspace*{-\baselineskip}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Encrypted}
-  \lstset{language=bash,label=SliceExaple}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  Number of threads: 1
-  Initializing random number generator from current time
-  Prime numbers limit: 20000
-  Initializing worker threads...
-  Threads started!
-  CPU speed:
-      events per second:   350.74
-  General statistics:
-      total time:                          10.0028s
-      total number of events:              3509
-  Latency (ms):
-            min:                                    2.76
-            avg:                                    2.85
-            max:                                    3.33
-            95th percentile:                        2.97
-            sum:                                10000.15
-  Threads fairness:
-      events (avg/stddev):           3509.0000/0.00
-      execution time (avg/stddev):   10.0001/0.00
-  \end{lstlisting}
-\end{minipage}
-\hspace{0.5cm}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Not-Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  Number of threads: 1
-  Initializing random number generator from current time
-  Prime numbers limit: 20000
-  Initializing worker threads...
-  Threads started!
-  CPU speed:
-      events per second:   329.91
-  General statistics:
-      total time:                          10.0007s
-      total number of events:              3300
-  Latency (ms):
-            min:                                    2.76
-            avg:                                    3.03
-            max:                                    7.87
-            95th percentile:                        3.02
-            sum:                                 9997.00
-  Threads fairness:
-      events (avg/stddev):           3300.0000/0.00
-      execution time (avg/stddev):   9.9970/0.00
-  \end{lstlisting}
-\end{minipage}
-
-\newpage
-\subsubsection{Disk Benchmark}
-\begin{center}
-  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
-\end{center}
-\vspace*{-\baselineskip}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Encrypted}
-  \lstset{language=bash,label=SliceExaple}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  24 files, 655360Kb each, 15360Mb total
-  Creating files for the test...
-  Extra file open flags: (none)
-  Creating file test_file.0
-  Creating file test_file.1
-  Creating file test_file.2
-  Creating file test_file.3
-  Creating file test_file.4
-  Creating file test_file.5
-  Creating file test_file.6
-  Creating file test_file.7
-  Creating file test_file.8
-  Creating file test_file.9
-  Creating file test_file.10
-  Creating file test_file.11
-  Creating file test_file.12
-  Creating file test_file.13
-  Creating file test_file.14
-  Creating file test_file.15
-  Creating file test_file.16
-  Creating file test_file.17
-  Creating file test_file.18
-  Creating file test_file.19
-  Creating file test_file.20
-  Creating file test_file.21
-  Creating file test_file.22
-  Creating file test_file.23
-  16106127360 bytes written in 505.82 seconds (30.37 MiB/sec).
-  
-  real    8m25.865s
-  user    0m0.385s
-  sys     0m19.232s
-  \end{lstlisting}
-\end{minipage}
-\hspace{0.5cm}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Not-Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  24 files, 655360Kb each, 15360Mb total
-  Creating files for the test...
-  Extra file open flags: (none)
-  Creating file test_file.0
-  Creating file test_file.1
-  Creating file test_file.2
-  Creating file test_file.3
-  Creating file test_file.4
-  Creating file test_file.5
-  Creating file test_file.6
-  Creating file test_file.7
-  Creating file test_file.8
-  Creating file test_file.9
-  Creating file test_file.10
-  Creating file test_file.11
-  Creating file test_file.12
-  Creating file test_file.13
-  Creating file test_file.14
-  Creating file test_file.15
-  Creating file test_file.16
-  Creating file test_file.17
-  Creating file test_file.18
-  Creating file test_file.19
-  Creating file test_file.20
-  Creating file test_file.21
-  Creating file test_file.22
-  Creating file test_file.23
-  16106127360 bytes written in 504.78 seconds (30.43 MiB/sec).
-  
-  real	8m25.183s
-  user	0m0.360s
-  sys	0m20.746s
-    
-  \end{lstlisting}
-\end{minipage}
-
-\newpage
-\begin{center}
-  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
-\end{center}
-\vspace*{-\baselineskip}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Encrypted}
-  \lstset{language=bash,label=SliceExaple}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  Running the test with following options:
-  Number of threads: 16
-  Initializing random number generator from current time
-  24 files, 640MiB each
-  15GiB total file size
-  Block size 16KiB
-  Read/Write ratio for combined random IO test: 1.00
-  Periodic FSYNC enabled, calling fsync() each 100 requests.
-  Calling fsync() at the end of test, Enabled.
-  Using synchronous I/O mode
-  Doing random r/w test
-  Initializing worker threads...
-  Threads started!
-  File operations:
-      reads/s:                      74.55
-      writes/s:                     74.55
-      fsyncs/s:                     36.00
-  Throughput:
-      read, MiB/s:                  1.16
-      written, MiB/s:               1.16
-  General statistics:
-      total time:                          1800.1486s
-      total number of events:              332823
-  Latency (ms):
-            min:                                    0.00
-            avg:                                   86.54
-            max:                                 1212.47
-            95th percentile:                      363.18
-            sum:                             28800880.92
-  
-  Threads fairness:
-      events (avg/stddev):           20801.4375/174.99
-      execution time (avg/stddev):   1800.0551/0.01
-  \end{lstlisting}
-\end{minipage}
-\hspace{0.5cm}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Not-Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  Running the test with following options:
-  Number of threads: 16
-  Initializing random number generator from current time
-  24 files, 640MiB each
-  15GiB total file size
-  Block size 16KiB
-  Read/Write ratio for combined random IO test: 1.00
-  Periodic FSYNC enabled, calling fsync() each 100 requests.
-  Calling fsync() at the end of test, Enabled.
-  Using synchronous I/O mode
-  Doing random r/w test
-  Initializing worker threads...
-  Threads started!
-  File operations:
-      reads/s:                      76.57
-      writes/s:                     76.56
-      fsyncs/s:                     36.95
-  Throughput:
-      read, MiB/s:                  1.20
-      written, MiB/s:               1.20
-  General statistics:
-      total time:                          1800.4639s
-      total number of events:              341849
-  Latency (ms):
-            min:                                    0.00
-            avg:                                   84.25
-            max:                                 1261.22
-            95th percentile:                      363.18
-            sum:                             28801639.84
-  Threads fairness:
-      events (avg/stddev):           21365.5625/138.94
-      execution time (avg/stddev):   1800.1025/0.00
-  \end{lstlisting}
-\end{minipage}
-
-\begin{figure}
-  \includegraphics[width=10cm]{images/image5.png}
-  \centering
-  \caption{CPU Load while running sysbench}
-\end{figure}
-
-\newpage
-To get a more clear view of the performance results, let's arrange them in a more comfortable way:
-
-\begin{center}
-  \tiny
-  \begin{tabular}{||c c c c c||}
-    \hline
-    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
-    \hline
-    \multirow{3}{4em}{File Operations} & reads/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & writes/s & NUMBER1 & NUMBER & PERCENTAGE \\
-    & fsyncs/s & NUMBER1 & NUMBER & PERCENTAGE \\
-    \hline
-    \multirow{2}{4em}{Throughput} & reads MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & written MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    \hline
-    \multirow{2}{4em}{General Stadistics} & total time & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & total number of events & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    \hline
-    \multirow{5}{4em}{Latency} & min & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & avg & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & max & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & 95th Percentile & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & sum & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    \hline
-    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
-    & execution time (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
-    \hline
-  \end{tabular}
-\end{center}
-
-Impact
-\begin{itemize}
-  \item \textbf{Files Operations:} 
-  \item \textbf{Throughput:} 
-  \item \textbf{General Statistics:}
-  \item \textbf{Latency:}
-  \item \textbf{Threads Fairness:}
-\end{itemize}
-
-\newpage
-\subsection{GPFS Conclusions - Pros and Cons}
 \begin{itemize}
   \item First
   \item Second
