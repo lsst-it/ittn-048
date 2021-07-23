@@ -1353,7 +1353,7 @@ Comparison Table
     & total number of events & 34612150 & 74351698 & Increased 214.81 \\
     \hline
     \multirow{5}{4em}{Latency} & min & 0 & 0 & 0.00 \\
-    & avg & 0.83 & 0.39 & Decreased 53.01 \\
+    & avg & 0.83 & 0.39 & Increased 53.01 \\
     & max & 213.34 & 222.88 & Increased 4.47 \\
     & 95th Percentile & 2.86 & 1.55 & Decreased 54.20 \\
     & sum & 28773912.07 & 28756584.90 & Increased 0.06025 \\
@@ -1366,16 +1366,16 @@ Comparison Table
 \vspace*{-\baselineskip}
 Impact
 \begin{itemize}
-  \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a PERCENTAGE percent due to encryption.
-  \item \textbf{Throughput:} lost a PERCENTAGE percentage both at write and read operations while Encrypting.
-  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur, shows that, in the same amount of time, PERCENTAGE percentage more events happened at the Not-Encrypted VM.
-  \item \textbf{Latency:} In the same time period, the average for the Encrypted vs Not-Encrypted suffered a ~59.83 percentage more latency, while the Max increased in a ~20.08 percent.
-  \item \textbf{Threads Fairness:} The number of events per thread, were ~40.28 percent higher in a Not-Encrypted system than in an Encrypted one.
+  \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~54 percent due to encryption.
+  \item \textbf{Throughput:} lost a ~54 percentage both at write and read operations while Encrypting.
+  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that, in the same amount of time, ~215 percentage more events happened at the Not-Encrypted VM.
+  \item \textbf{Latency:} In the same period, the average for the Encrypted vs. Not-Encrypted suffered a ~53 percentage more latency, while the Max increased by ~4.5 percent.
+  \item \textbf{Threads Fairness:} The number of events per thread, were ~46.55 percent higher in a Not-Encrypted system than in an Encrypted one.
 \end{itemize}
 \vspace*{-\baselineskip}
 \subsection{SSD NVMe Conclusions - Pros and Cons}
 \begin{itemize}
-  \item First
-  \item Second
-  \item Third..
+  \item The higher the speed rate from the disk, the less impact encryption produces over the drive.
+  \item Average Latency increases over the Encrypted disk VM.
+  \item The standard deviation over the threads events is abnormally high in the Not-Encrypted drive.
 \end{itemize}
