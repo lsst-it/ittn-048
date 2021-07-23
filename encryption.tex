@@ -1068,7 +1068,7 @@ Comparison Table
 \end{itemize}
 
 \newpage
-\subsection{Performance Test - Virtual Drive over NVMe}
+\subsection{Performance Test - Virtual Drive over SSD NVMe}
 \subsubsection{CPU Benchmark}
 \begin{center}
   Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
@@ -1078,7 +1078,33 @@ Comparison Table
   \centering
   \textit{Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  Test Content      
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+  
+  Running the test with following options:
+  Number of threads: 1
+  Initializing random number generator from current time
+  
+  
+  Prime numbers limit: 20000
+  
+  Initializing worker threads...
+  
+  Threads started!
+
+  CPU speed:
+    events per second:   622.87
+  General statistics:             
+    total time:                          10.0009s
+    total number of events:              6230       
+  Latency (ms):                                 
+    min:                                    1.58
+    avg:                                    1.61        
+    max:                                    1.92        
+    95th percentile:                        1.64        
+    sum:                                 9999.43        
+  Threads fairness:
+    events (avg/stddev):         6230.0000/0.00
+    execution time (avg/stddev): 9.9994/0.00  
   \end{lstlisting}
 \end{minipage}
 \hspace{0.5cm}
@@ -1086,7 +1112,33 @@ Comparison Table
   \centering
   \textit{Not-Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  Test Content
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+  
+  Running the test with following options:
+  Number of threads: 1
+  Initializing random number generator from current time
+  
+  
+  Prime numbers limit: 20000
+  
+  Initializing worker threads...
+  
+  Threads started!
+  
+  CPU speed:
+      events per second:   622.71
+  General statistics:
+      total time:                          10.0004s
+      total number of events:              6228
+  Latency (ms):
+           min:                                    1.58
+           avg:                                    1.61
+           max:                                    3.65
+           95th percentile:                        1.64
+           sum:                                 9998.94
+  Threads fairness:
+      events (avg/stddev):         6228.0000/0.00
+      execution time (avg/stddev): 9.9989/0.00
   \end{lstlisting}
 \end{minipage}
 
@@ -1100,7 +1152,40 @@ Comparison Table
   \centering
   \textit{Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  Test Content
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)                                     
+  
+  24 files, 1310720Kb each, 30720Mb total
+  Creating files for the test...
+  Extra file open flags: (none)
+  Creating file test_file.0
+  Creating file test_file.1
+  Creating file test_file.2
+  Creating file test_file.3
+  Creating file test_file.4
+  Creating file test_file.5
+  Creating file test_file.6
+  Creating file test_file.7
+  Creating file test_file.8
+  Creating file test_file.9
+  Creating file test_file.10
+  Creating file test_file.11
+  Creating file test_file.12
+  Creating file test_file.13
+  Creating file test_file.14
+  Creating file test_file.15
+  Creating file test_file.16
+  Creating file test_file.17
+  Creating file test_file.18
+  Creating file test_file.19
+  Creating file test_file.20
+  Creating file test_file.21
+  Creating file test_file.22
+  Creating file test_file.23
+  32212254720 bytes written in 68.30 seconds (449.76 MiB/sec).
+  
+  real    1m8.309s
+  user    0m0.061s
+  sys     0m10.984s
   \end{lstlisting}
 \end{minipage}
 \hspace{0.5cm}
@@ -1108,7 +1193,40 @@ Comparison Table
   \centering
   \textit{Not-Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  Test Content
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
+
+  24 files, 1310720Kb each, 30720Mb total
+  Creating files for the test...
+  Extra file open flags: (none)
+  Creating file test_file.0
+  Creating file test_file.1
+  Creating file test_file.2
+  Creating file test_file.3
+  Creating file test_file.4
+  Creating file test_file.5
+  Creating file test_file.6
+  Creating file test_file.7
+  Creating file test_file.8
+  Creating file test_file.9
+  Creating file test_file.10
+  Creating file test_file.11
+  Creating file test_file.12
+  Creating file test_file.13
+  Creating file test_file.14
+  Creating file test_file.15
+  Creating file test_file.16
+  Creating file test_file.17
+  Creating file test_file.18
+  Creating file test_file.19
+  Creating file test_file.20
+  Creating file test_file.21
+  Creating file test_file.22
+  Creating file test_file.23
+  32212254720 bytes written in 58.35 seconds (526.51 MiB/sec).
+
+  real    0m58.350s
+  user    0m0.065s
+  sys     0m10.842s
   \end{lstlisting}
 \end{minipage}
 
@@ -1121,7 +1239,48 @@ Comparison Table
   \centering
   \textit{Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  Test Content
+  Number of threads: 16
+  Initializing random number generator from current time
+  
+  
+  Extra file open flags: (none)
+  24 files, 1.25GiB each
+  30GiB total file size
+  Block size 16KiB
+  Number of IO requests: 0
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  
+  Threads started!
+  
+  
+  File operations:
+      reads/s:                      7753.55
+      writes/s:                     7753.54
+      fsyncs/s:                     3721.91
+  
+  Throughput:
+      read, MiB/s:                  121.15
+      written, MiB/s:               121.15
+  
+  General statistics:
+      total time:                          1800.0066s
+      total number of events:              34612150
+  
+  Latency (ms):
+      min:                                    0.00
+      avg:                                    0.83
+      max:                                  213.34
+      95th percentile:                        2.86
+      sum:                             28773912.07
+  
+  Threads fairness:
+    events (avg/stddev):         2163259.3750/2817.00
+    execution time (avg/stddev): 1798.3695/0.03
   \end{lstlisting}
 \end{minipage}
 \hspace{0.5cm}
@@ -1129,7 +1288,48 @@ Comparison Table
   \centering
   \textit{Not-Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  Test Content
+  Number of threads: 16
+  Initializing random number generator from current time
+  
+  
+  Extra file open flags: (none)
+  24 files, 1.25GiB each
+  30GiB total file size
+  Block size 16KiB
+  Number of IO requests: 0
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  
+  Threads started!
+  
+  
+  File operations:
+      reads/s:                      16655.75
+      writes/s:                     16655.75
+      fsyncs/s:                     7994.97
+  
+  Throughput:
+      read, MiB/s:                  260.25
+      written, MiB/s:               260.25
+  
+  General statistics:
+      total time:                          1800.0064s
+      total number of events:              74351698
+  
+  Latency (ms):
+      min:                                    0.00
+      avg:                                    0.39
+      max:                                  222.88
+      95th percentile:                        1.55
+      sum:                             28756585.90
+  
+  Threads fairness:
+    events (avg/stddev):         4646981.1250/35144.16
+    execution time (avg/stddev): 1797.2866/0.05
   \end{lstlisting}
 \end{minipage}
 
@@ -1142,24 +1342,24 @@ Comparison Table
     \hline
     \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
     \hline
-    \multirow{3}{4em}{File Operations} & reads/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & writes/s & NUMBER1 & NUMBER & PERCENTAGE \\
-    & fsyncs/s & NUMBER1 & NUMBER & PERCENTAGE \\
+    \multirow{3}{4em}{File Operations} & reads/s & 7753.55 & 16655.75 & Decreased 53.45 \\
+    & writes/s & 7753.54 & 16655.75 & Decreased 53.45 \\
+    & fsyncs/s & 3721.91 & 7994.97 & Decreased 53.45 \\
     \hline
-    \multirow{2}{4em}{Throughput} & reads MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & written MiB/s & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \multirow{2}{4em}{Throughput} & reads MiB/s & 121.15 & 260.25 & Decreased 53.45 \\
+    & written MiB/s & 121.15 & 260.25 & Decreased 53.45 \\
     \hline
-    \multirow{2}{4em}{General Stadistics} & total time & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & total number of events & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \multirow{2}{4em}{General Stadistics} & total time & 1800.0066 & 1800.0064 & Decreased 0.000011 \\
+    & total number of events & 34612150 & 74351698 & Increased 214.81 \\
     \hline
-    \multirow{5}{4em}{Latency} & min & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & avg & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & max & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & 95th Percentile & NUMBER1 & NUMBER2 & PERCENTAGE \\
-    & sum & NUMBER1 & NUMBER2 & PERCENTAGE \\
+    \multirow{5}{4em}{Latency} & min & 0 & 0 & 0.00 \\
+    & avg & 0.83 & 0.39 & Decreased 53.01 \\
+    & max & 213.34 & 222.88 & Increased 4.47 \\
+    & 95th Percentile & 2.86 & 1.55 & Decreased 54.20 \\
+    & sum & 28773912.07 & 28756584.90 & Increased 0.06025 \\
     \hline
-    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
-    & execution time (avg/stddev) & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 & NUMBER1/NUMBER2 \\
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & 2163259.3750/2817.00 & 4646981.1250/35144.16 & Increased 46.55/Increased 1147.57 \\
+    & execution time (avg/stddev) & 1798.3695/0.03 & 1797.2866/0.05 & Decreased 0.0603/Increased 66.67 \\
     \hline
   \end{tabular}
 \end{center}
@@ -1173,7 +1373,7 @@ Impact
   \item \textbf{Threads Fairness:} The number of events per thread, were ~40.28 percent higher in a Not-Encrypted system than in an Encrypted one.
 \end{itemize}
 \vspace*{-\baselineskip}
-\subsection{NVMe Conclusions - Pros and Cons}
+\subsection{SSD NVMe Conclusions - Pros and Cons}
 \begin{itemize}
   \item First
   \item Second
