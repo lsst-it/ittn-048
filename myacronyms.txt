@@ -9,3 +9,6 @@
   PV:Physical Volume
   VG:Volume Group
   LV:Logical Volume
+  GPFS:General Parallel File System
+  HDD:Hard Drive Disk
+  SSD:Solid State Drive
