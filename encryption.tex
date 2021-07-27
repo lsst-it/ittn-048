@@ -736,16 +736,16 @@ Comparison Table
 \vspace*{-\baselineskip}
 \begin{itemize}
   \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a 10.44 percent due to encryption.
-  \item \textbf{Throughput:} lost a 10.56 percentage both at write and read operations while Encrypting.
-  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur, shows that, in the same amount of time, 11.65 percentage more events happened at the Not-Encrypted VM.
-  \item \textbf{Latency:} In the same time period, the average for the Encrypted vs Not-Encrypted suffered a ~10.42 percentage more latency, while the Max increased in a ~23.65 percent.
-  \item \textbf{Threads Fairness:} The number of events per thread, were ~10.44 percent higher in a Not-Encrypted system than in an Encrypted one.
+  \item \textbf{Throughput:} Lost a 10.56 percentage both at write and read operations while Encrypting.
+  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that 11.65 percentage more events happened at the Not-Encrypted VM in the same amount of time.
+  \item \textbf{Latency:} In the same period, the average for the Encrypted vs. Not-Encrypted suffered a ~10.42 percentage more latency, while the Max increased by ~23.65 percent.
+  \item \textbf{Threads Fairness:} The number of events per thread was ~10.44 percent higher in a Not-Encrypted system than in an Encrypted one.
 \end{itemize}
 
 \subsection{GPFS/Gluster Conclusions - Pros and Cons}
 \begin{itemize}
-  \item The Read/Write operations are significantly lower, due to the cluster network based storage, in comparison than the direct disks RW operations (HDD, SDD and NVMe).
-  \item Since the RW decreased operations, the performance impact is not as high than in the direct disk, but still has an impact between Encrypted vs Not-Encrypted (in favor to Not-Encrypted)
+  \item The Read/Write operations are significantly lower due to the cluster network-based storage compared to the direct disk RW operations (HDD, SDD, and NVMe).
+  \item Since the RW decreased operations, the performance impact is not as high as in the direct disk but still has an effect between Encrypted vs. Not-Encrypted (in favor of Not-Encrypted).
 \end{itemize}
 
 \newpage
@@ -1055,16 +1055,16 @@ Comparison Table
 \vspace*{-\baselineskip}
 \begin{itemize}
   \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~57.10 percent due to encryption.
-  \item \textbf{Throughput:} lost a ~57.10 percentage both at write and read operations while Encrypting.
-  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur, shows that, in the same amount of time, ~233.11 percentage more events happened at the Not-Encrypted VM.
-  \item \textbf{Latency:} In the same time period, the average for the Encrypted vs Not-Encrypted suffered a ~57.03 percentage more latency, while the Max increased in a ~4743.17 percent.
-  \item \textbf{Threads Fairness:} The number of events per thread, were ~42.90 percent higher in a Not-Encrypted system than in an Encrypted one.
+  \item \textbf{Throughput:} Lost a ~57.10 percentage both at write and read operations while Encrypting.
+  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that ~233.11 percentage more events happened at the Not-Encrypted VM in the same amount of time.
+  \item \textbf{Latency:} In the same period, the average for the Encrypted vs. Not-Encrypted suffered a ~57.03 percentage more latency, while the Max increased by ~4743.17 percent.
+  \item \textbf{Threads Fairness:} The number of events per thread was ~42.90 percent higher in a Not-Encrypted system than in an Encrypted one.
 \end{itemize}
 \vspace*{-\baselineskip}
 \subsection{SDD Conclusions - Pros and Cons}
 \begin{itemize}
-  \item The SDD vs the HDD shows a high impact over Encrypted vs Not-Encrypted, being both around 60 percent.
-  \item VM overlay shows that, even though one VM was over HDD and the other over SDD, Files Operations shows a similar RW rates.
+  \item The SDD vs. the HDD shows a high impact over Encrypted vs. Not-Encrypted, being both around 60 percent.
+  \item VM overlay shows that even though one VM was over HDD and the other over SDD, Files Operations shows similar RW rates.
 \end{itemize}
 
 \newpage
@@ -1367,7 +1367,7 @@ Comparison Table
 Impact
 \begin{itemize}
   \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~54 percent due to encryption.
-  \item \textbf{Throughput:} lost a ~54 percentage both at write and read operations while Encrypting.
+  \item \textbf{Throughput:} Lost a ~54 percentage both at write and read operations while Encrypting.
   \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that, in the same amount of time, ~215 percentage more events happened at the Not-Encrypted VM.
   \item \textbf{Latency:} In the same period, the average for the Encrypted vs. Not-Encrypted suffered a ~53 percentage more latency, while the Max increased by ~4.5 percent.
   \item \textbf{Threads Fairness:} The number of events per thread, were ~46.55 percent higher in a Not-Encrypted system than in an Encrypted one.
@@ -1377,5 +1377,5 @@ Impact
 \begin{itemize}
   \item The higher the speed rate from the disk, the less impact encryption produces over the drive.
   \item Average Latency increases over the Encrypted disk VM.
-  \item The standard deviation over the threads events is abnormally high in the Not-Encrypted drive.
+  \item The standard deviation over the events of the thread is abnormally high in the Not-Encrypted drive.
 \end{itemize}
