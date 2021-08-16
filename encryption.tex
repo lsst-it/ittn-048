@@ -1384,8 +1384,8 @@ Since GPFS is not an open-source solution, it can not be tested for encryption p
 \end{itemize}
 
 \newpage
-\subsection{Performance Test - M.2 NVMe over Barebone Server}
-All virtual tests give as \textit{slower} an idea of how it would behave, taking out the virtualization layer. Currently, the M.2 NVMe drives are the fastest on the market. We are going to test and compare Encrypted vs. Not-Encrypted over a Barebone Server, using M.2. NVMe drives to then compare the results with the VD and see if the payload behaves.
+\subsection{Performance Test - M.2 NVMe over Bare Metal Server}
+All virtual tests give as \textit{slower} an idea of how it would behave, taking out the virtualization layer. Currently, the M.2 NVMe drives are the fastest on the market. We are going to test and compare Encrypted vs. Not-Encrypted over a  Metal Server, using M.2. NVMe drives to then compare the results with the VD and see if the payload behaves.
 \subsubsection{CPU Benchmark}
 \begin{center}
   Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
@@ -1430,7 +1430,34 @@ All virtual tests give as \textit{slower} an idea of how it would behave, taking
   \centering
   \textit{Not-Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+    sysbench 1.0.17 (using system LuaJIT 2.0.4)
+    Running the test with following options:
+    Number of threads: 1
 
+    Initializing random number generator from current time
+    
+    Prime numbers limit: 20000
+    Initializing worker threads...
+    
+    Threads started!
+    
+    CPU speed:
+      events per second:   598.08
+    
+    General statistics:
+      total time:                        10.0007s
+      total number of events:            5983
+    
+    Latency (ms):
+      min:                                  1.65
+      avg:                                  1.67
+      max:                                  3.70
+      95th percentile:                      1.67
+      sum:                               9999.64
+    
+    Threads fairness:
+      events (avg/stddev):         5983.0000/0.00
+      execution time (avg/stddev): 9.9996/0.00
   \end{lstlisting}
 \end{minipage}
 
@@ -1485,7 +1512,41 @@ All virtual tests give as \textit{slower} an idea of how it would behave, taking
   \centering
   \textit{Not-Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  sysbench 1.0.17 (using system LuaJIT 2.0.4)
 
+  24 files, 1310720Kb each, 30720Mb total
+  Creating files for the test...
+  Extra file open flags: (none)
+  Creating file test_file.0
+  Creating file test_file.1
+  Creating file test_file.2
+  Creating file test_file.3
+  Creating file test_file.4
+  Creating file test_file.5
+  Creating file test_file.6
+  Creating file test_file.7
+  Creating file test_file.8
+  Creating file test_file.9
+  Creating file test_file.10
+  Creating file test_file.11
+  Creating file test_file.12
+  Creating file test_file.13
+  Creating file test_file.14
+  Creating file test_file.15
+  Creating file test_file.16
+  Creating file test_file.17
+  Creating file test_file.18
+  Creating file test_file.19
+  Creating file test_file.20
+  Creating file test_file.21
+  Creating file test_file.22
+  Creating file test_file.23
+  32212254720 bytes written in 37.52 seconds (818.86 MiB/sec).
+  
+  real	0m37.520s
+  user	0m0.082s
+  sys	0m16.939s
+  sysbench 1.0.17 
   \end{lstlisting}
 \end{minipage}
 
@@ -1499,7 +1560,6 @@ All virtual tests give as \textit{slower} an idea of how it would behave, taking
   \textit{Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
   Number of threads: 16
-  Initializing random number generator from current time
   24 files, 1.25GiB each
   30GiB total file size
   Block size 16KiB
@@ -1515,9 +1575,11 @@ All virtual tests give as \textit{slower} an idea of how it would behave, taking
     reads/s:                      46432.36
     writes/s:                     46432.36
     fsyncs/s:                     22287.74
+
   Throughput:
     read, MiB/s:                  725.51
     written, MiB/s:               725.51
+
   General statistics:
     total time:                  1800.0058s
     total number of events:      207274912
@@ -1528,6 +1590,7 @@ All virtual tests give as \textit{slower} an idea of how it would behave, taking
     max:                                    7.75
     95th percentile:                        0.83
     sum:                             28490588.91
+
   Threads fairness:
     events (avg/stddev):         12954682.0000/26401.40
     execution time (avg/stddev): 1780.6618/0.18
@@ -1538,7 +1601,41 @@ All virtual tests give as \textit{slower} an idea of how it would behave, taking
   \centering
   \textit{Not-Encrypted}
   \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
+  Number of threads: 16
+  24 files, 1.25GiB each
+  30GiB total file size
+  Block size 16KiB
+  Read/Write ratio for combined random IO test: 1.00
+  Periodic FSYNC enabled, calling fsync() each 100 requests.
+  Calling fsync() at the end of test, Enabled.
+  Using synchronous I/O mode
+  Doing random r/w test
+  Initializing worker threads...
+  Threads started!
+  
+  File operations:
+    reads/s:                      55835.94
+    writes/s:                     55835.94
+    fsyncs/s:                     26801.46
 
+  Throughput:
+    read, MiB/s:                  872.44
+    written, MiB/s:               872.44
+  
+  General statistics:
+    total time:                        1800.0033s
+    total number of events:            249252323
+  
+  Latency (ms):
+    min:                                  0.00
+    avg:                                  0.11
+    max:                                  5.50
+    95th percentile:                      0.67
+    sum:                           28307700.56
+
+  Threads fairness:
+    events (avg/stddev):         15578270.1875/23905.21
+    execution time (avg/stddev): 1769.2313/0.29
   \end{lstlisting}
 \end{minipage}
 \begin{figure}
