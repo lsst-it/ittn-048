@@ -746,328 +746,8 @@ Since GPFS is not an open-source solution, it can not be tested for encryption p
 
 \subsubsection{Virtual Drive over GPFS/Gluster Conclusions - Pros and Cons}
 \begin{itemize}
-  \item The Read/Write operations are significantly lower due to the cluster network-based storage compared to the direct disk RW operations (HDD, SDD, and NVMe).
+  \item The Read/Write operations are significantly lower due to the cluster network-based storage compared to the direct disk RW operations (HDD, SSD, and NVMe).
   \item Since the RW decreased operations, the performance impact is not as high as in the direct disk but still has an effect between Encrypted vs. Not-Encrypted (in favor of Not-Encrypted).
-\end{itemize}
-
-\newpage
-\subsection{Performance Test - Virtual Drive over SDD}
-\subsubsection{CPU Benchmark}
-\begin{center}
-  Test: \textbf{\textit{sysbench --test=cpu --cpu-max-prime=20000 run}}  
-\end{center}
-\vspace*{-\baselineskip}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  [root@encrypted ~]# sysbench --test=cpu --cpu-max-prime=20000 run
-  WARNING: the --test option is deprecated. You can pass a script name or path on the command line without any options.
-  sysbench 1.0.17 (using system LuaJIT 2.0.4)
-  
-  Running the test with following options:
-  Number of threads: 1
-  Initializing random number generator from current time
-  
-  
-  Prime numbers limit: 20000
-  
-  Initializing worker threads...
-  
-  Threads started!
-  
-  CPU speed:
-      events per second:   279.21
-  
-  General statistics:
-      total time:                          10.0006s
-      total number of events:              2794
-  
-  Latency (ms):
-      min:                                    3.04
-      avg:                                    3.58
-      max:                                   21.07
-      95th percentile:                        9.06
-      sum:                                 9997.23
-  
-  Threads fairness:
-      events (avg/stddev):           2794.0000/0.00
-      execution time (avg/stddev):   9.9972/0.00
-  \end{lstlisting}
-\end{minipage}
-\hspace{0.5cm}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Not-Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  [root@not-encrypted ~]# sysbench --test=cpu --cpu-max-prime=20000 run
-  WARNING: the --test option is deprecated. You can pass a script name or path on the command line without any options.
-  sysbench 1.0.17 (using system LuaJIT 2.0.4)
-  
-  Running the test with following options:
-  Number of threads: 1
-  Initializing random number generator from current time
-  
-  
-  Prime numbers limit: 20000
-  
-  Initializing worker threads...
-  
-  Threads started!
-  
-  CPU speed:
-      events per second:   327.59
-  
-  General statistics:
-      total time:                          10.0011s
-      total number of events:              3277
-  
-  Latency (ms):
-      min:                                    3.04
-      avg:                                    3.05
-      max:                                    4.47
-      95th percentile:                        3.07
-      sum:                                 9998.90
-  
-  Threads fairness:
-      events (avg/stddev):           3277.0000/0.00
-      execution time (avg/stddev):   9.9989/0.00
-  \end{lstlisting}
-\end{minipage}
-
-\newpage
-\subsubsection{Disk Benchmark}
-\begin{center}
-  Test: \textbf{\textit{time sysbench --test=fileio --file-total-size=30G --file-num=24 prepare}}  
-\end{center}
-\vspace*{-\baselineskip}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  24 files, 1310720Kb each, 30720Mb total
-  Creating files for the test...
-  Extra file open flags: (none)
-  Creating file test_file.0
-  Creating file test_file.1
-  Creating file test_file.2
-  Creating file test_file.3
-  Creating file test_file.4
-  Creating file test_file.5
-  Creating file test_file.6
-  Creating file test_file.7
-  Creating file test_file.8
-  Creating file test_file.9
-  Creating file test_file.10
-  Creating file test_file.11
-  Creating file test_file.12
-  Creating file test_file.13
-  Creating file test_file.14
-  Creating file test_file.15
-  Creating file test_file.16
-  Creating file test_file.17
-  Creating file test_file.18
-  Creating file test_file.19
-  Creating file test_file.20
-  Creating file test_file.21
-  Creating file test_file.22
-  Creating file test_file.23
-  32212254720 bytes written in 444.62 seconds (69.09 MiB/sec).
-  
-  real    7m24.647s
-  user    0m1.065s
-  sys     0m24.865s
-  \end{lstlisting}
-\end{minipage}
-\hspace{0.5cm}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Not-Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  24 files, 1310720Kb each, 30720Mb total
-  Creating files for the test...
-  Extra file open flags: (none)
-  Creating file test_file.0
-  Creating file test_file.1
-  Creating file test_file.2
-  Creating file test_file.3
-  Creating file test_file.4
-  Creating file test_file.5
-  Creating file test_file.6
-  Creating file test_file.7
-  Creating file test_file.8
-  Creating file test_file.9
-  Creating file test_file.10
-  Creating file test_file.11
-  Creating file test_file.12
-  Creating file test_file.13
-  Creating file test_file.14
-  Creating file test_file.15
-  Creating file test_file.16
-  Creating file test_file.17
-  Creating file test_file.18
-  Creating file test_file.19
-  Creating file test_file.20
-  Creating file test_file.21
-  Creating file test_file.22
-  Creating file test_file.23
-  32212254720 bytes written in 308.17 seconds (99.69 MiB/sec).
-  
-  real	5m8.190s
-  user	0m1.051s
-  sys	0m24.147s
-  \end{lstlisting}
-\end{minipage}
-
-\newpage
-\begin{center}
-  Test: \textbf{\textit{sysbench fileio --file-total-size=30G --file-num=24 --file-test-mode=rndrw --time=1800 --file-rw-ratio=1 --threads=16 --max-requests=0 run}}  
-\end{center}
-\vspace*{-\baselineskip}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, numbers=left, label=cpu_test1]
-  Running the test with following options:
-  Number of threads: 16
-  Initializing random number generator from current time
-  
-  
-  Extra file open flags: (none)
-  24 files, 1.25GiB each
-  30GiB total file size
-  Block size 16KiB
-  Number of IO requests: 0
-  Read/Write ratio for combined random IO test: 1.00
-  Periodic FSYNC enabled, calling fsync() each 100 requests.
-  Calling fsync() at the end of test, Enabled.
-  Using synchronous I/O mode
-  Doing random r/w test
-  Initializing worker threads...
-  
-  Threads started!
-  
-  
-  File operations:
-      reads/s:                      2514.25
-      writes/s:                     2514.25
-      fsyncs/s:                     1207.04
-  
-  Throughput:
-      read, MiB/s:                  39.29
-      written, MiB/s:               39.29
-  
-  General statistics:
-      total time:                          1800.0455s
-      total number of events:              11223964
-  
-  Latency (ms):
-      min:                                    0.00
-      avg:                                    2.56
-      max:                                   54.50
-      95th percentile:                       10.09
-      sum:                             28767929.92
-  
-  Threads fairness:
-      events (avg/stddev):         701497.7500/2374.58
-      execution time (avg/stddev): 1797.9956/0.07
-  \end{lstlisting}
-\end{minipage}
-\hspace{0.5cm}
-\noindent\begin{minipage}[t]{0.45\linewidth}
-  \centering
-  \textit{Not-Encrypted}
-  \begin{lstlisting}[basicstyle=\tiny,frame=single, label=cpu_test2]
-  Running the test with following options:
-  Number of threads: 16
-  Initializing random number generator from current time
-  
-  
-  Extra file open flags: (none)
-  24 files, 1.25GiB each
-  30GiB total file size
-  Block size 16KiB
-  Number of IO requests: 0
-  Read/Write ratio for combined random IO test: 1.00
-  Periodic FSYNC enabled, calling fsync() each 100 requests.
-  Calling fsync() at the end of test, Enabled.
-  Using synchronous I/O mode
-  Doing random r/w test
-  Initializing worker threads...
-  
-  Threads started!
-  
-  
-  File operations:
-      reads/s:                      5861.03
-      writes/s:                     5861.03
-      fsyncs/s:                     2813.50
-  
-  Throughput:
-      read, MiB/s:                  91.58
-      written, MiB/s:               91.58
-  
-  General statistics:
-      total time:                          1800.0202s
-      total number of events:              26163995
-  
-  Latency (ms):
-      min:                                    0.00
-      avg:                                    1.10
-      max:                                  258.42
-      95th percentile:                        5.57
-      sum:                             28768693.60
-  
-  Threads fairness:
-      events (avg/stddev):         1635249.6875/3619.10
-      execution time (avg/stddev): 1798.0434/0.03
-  \end{lstlisting}
-\end{minipage}
-
-\newpage
-\textbf{Comparison Table}
-\vspace*{-\baselineskip}
-\begin{center}
-  \tiny
-  \begin{tabular}{||c c c c c||}
-    \hline
-    \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
-    \hline
-    \multirow{3}{4em}{File Operations} & reads/s & 2514.25 & 5861.03 & Increased 57.10 \\
-    & writes/s & 2514.25 & 5861.03 & Increased 57.10 \\
-    & fsyncs/s & 1207.04 & 2813.50 & Increased 57.10 \\
-    \hline
-    \multirow{2}{4em}{Throughput} & reads MiB/s & 39.29 & 91.58 & Increased 57.10 \\
-    & written MiB/s & 39.29 & 91.58 & Increased 57.10 \\
-    \hline
-    \multirow{2}{4em}{General Stadistics} & total time & 1800.0455 & 1800.0202 &  Decreased 0.001406 \\
-    & total number of events & 11223964 & 26163995 & Increased 233.11 \\
-    \hline
-    \multirow{5}{4em}{Latency} & min & 0.00 & 0.00 & 0.00 \\
-    & avg & 2.56 & 1.10 & Decreased 57.03 \\
-    & max & 54.5 & 257.42 & Increased 474.17 \\
-    & 95th Percentile & 10.09 & 5.57 & Decreased 55.20 \\
-    & sum & 28767929.92 & 28768693.60 & Increased 0.00265  \\
-    \hline
-    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & 701497.7500/2374.5800 & 1635248.6875/3619.1000 & Increased 42.90/Increased 52.41 \\
-    & execution time (avg/stddev) & 1797.9954/0.07 & 1798.0434/0.03 & Increased 0.0027/Decreased 57.14 \\
-    \hline
-  \end{tabular}
-\end{center}
-\textbf{Impact}
-\vspace*{-\baselineskip}
-\begin{itemize}
-  \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~57.10 percent due to encryption.
-  \item \textbf{Throughput:} Lost a ~57.10 percentage both at write and read operations while Encrypting.
-  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that ~233.11 percentage more events happened at the Not-Encrypted VM in the same amount of time.
-  \item \textbf{Latency:} In the same period, the average for the Encrypted vs. Not-Encrypted suffered a ~57.03 percentage more latency, while the Max increased by ~4743.17 percent.
-  \item \textbf{Threads Fairness:} The number of events per thread was ~42.90 percent higher in a Not-Encrypted system than in an Encrypted one.
-\end{itemize}
-\vspace*{-\baselineskip}
-\subsubsection{Virtual Drive over SDD Conclusions - Pros and Cons}
-\begin{itemize}
-  \item The SDD vs. the HDD shows a high impact over Encrypted vs. Not-Encrypted, being both around 60 percent.
-  \item VM overlay shows that even though one VM was over HDD and the other over SDD, Files Operations shows similar RW rates.
 \end{itemize}
 
 \newpage
@@ -1717,3 +1397,44 @@ All virtual tests give us a \textit{slower} idea on how it would behave encrypti
   \item Latencies dramatically increased at the Encrypted OS.
   \item Since the NVMe devices have higher throughout values than traditional SATA drives, the I/O operations - even though encrypted - are still tolerable and unnoticed.
 \end{itemize}
+
+\newpage
+\subsection{Comparison Plots}
+\subsubsection{Encrypted vs Not-Encrypted HDD}
+\begin{figure}
+  \includegraphics[width=12cm]{images/image7.png}
+  \centering
+  \caption{Encrypted vs Not-Encrypted HDD}
+\end{figure}
+\subsubsection{Encrypted vs Not-Encrypted GPFS}
+\begin{figure}
+  \includegraphics[width=12cm]{images/image8.png}
+  \centering
+  \caption{Encrypted vs Not-Encrypted GPFS}
+\end{figure}
+\newpage
+\subsubsection{Encrypted vs Not-Encrypted SSD NVMe}
+\begin{figure}
+  \includegraphics[width=12cm]{images/image9.png}
+  \centering
+  \caption{Encrypted vs Not-Encrypted SSD NVMe}
+\end{figure}
+\subsubsection{Encrypted vs Not-Encrypted Baremetal NVMe}
+\begin{figure}
+  \includegraphics[width=12cm]{images/image10.png}
+  \centering
+  \caption{Encrypted vs Not-Encrypted Baremetal NVMe}
+\end{figure}
+\newpage
+\subsubsection{Encrypted Disks Performance}
+\begin{figure}
+  \includegraphics[width=12cm]{images/image11.png}
+  \centering
+  \caption{Encrypted Disks Performance}
+\end{figure}
+\subsubsection{Not-Encrypted Disks Performance}
+\begin{figure}
+  \includegraphics[width=12cm]{images/image12.png}
+  \centering
+  \caption{Not-Encrypted Disks Performance}
+\end{figure}
