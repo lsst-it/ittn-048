@@ -1678,42 +1678,42 @@ All virtual tests give us a \textit{slower} idea on how it would behave encrypti
     \hline
     \textbf{Section} & \textbf{Metric} & \textbf{Encrypted} & \textbf{Not-Encrypted} & \textbf{Percentage} \\ [0.5ex]
     \hline
-    \multirow{3}{4em}{File Operations} & reads/s & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
-    & writes/s & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
-    & fsyncs/s & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
+    \multirow{3}{4em}{File Operations} & reads/s & 1837.31 & 5004.14 & Decreased 63.28 \\
+    & writes/s & 1837.31 & 5004.14 & Decreased 63.28 \\
+    & fsyncs/s & 882.11 & 2402.19 & Decreased 63.28 \\
     \hline
-    \multirow{2}{4em}{Throughput} & reads MiB/s & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
-    & written MiB/s & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
+    \multirow{2}{4em}{Throughput} & reads MiB/s & 28.71 & 78.19 & Decreased 63.28 \\
+    & written MiB/s & 28.71 & 78.19 & Decreased 63.28 \\
     \hline
-    \multirow{2}{4em}{General Stadistics} & total time & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
-    & total number of events & NUMBER1 & 74351698 & Increased PERCENTAGE \\
+    \multirow{2}{4em}{General Stadistics} & total time & 1800.1298 & 1800.0301 & Decreased 0.005539 \\
+    & total number of events & 8202333 & 22338827 & Decreased 172.35 \\
     \hline
     \multirow{5}{4em}{Latency} & min & 0 & 0 & 0.00 \\
-    & avg & NUMBER1 & NUMBER2 & Increased PERCENTAGE \\
-    & max & NUMBER1 & NUMBER2 & Increased PERCENTAGE \\
-    & 95th Percentile & NUMBER1 & NUMBER2 & Decreased PERCENTAGE \\
-    & sum & NUMBER1 & NUMBER2 & Increased PERCENTAGE \\
+    & avg & 3.51 & 1.29 & Increased 63.25 \\
+    & max & 99.09 & 50.99 & Increased 51.46 \\
+    & 95th Percentile & 20.74 & 7.30 & Increased 35.20 \\
+    & sum & 28792879.95 & 28775305.76 & Increased 0.06107 \\
     \hline
-    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & 2163259.3750/2817.00 & 4646981.1250/35144.16 & Increased 46.55/Increased 1147.57 \\
-    & execution time (avg/stddev) & 1798.3695/0.03 & 1797.2866/0.05 & Decreased 0.0603/Increased 66.67 \\
+    \multirow{2}{4em}{Threads fairness} & events (avg/stddev) & 512645.8125/3177.16 & 1396176.6875/10506.33 & Decreased 32.72/Increased 230.68 \\
+    & execution time (avg/stddev) & 1799.5550/0.01 & 1798.4566/0.02 & Decreased 0.0611/Decreased 100 \\
     \hline
   \end{tabular}
 \end{center}
 \textbf{Impact}
 \vspace*{-\baselineskip}
 \begin{itemize}
-  \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~NUMBER percent due to encryption.
-  \item \textbf{Throughput:} Lost a ~NUMBER percentage both at write and read operations while Encrypting.
-  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that, in the same amount of time, ~NUMBER percentage more events happened at the Not-Encrypted VM.
-  \item \textbf{Latency:} In the same period, the average for the Encrypted vs. Not-Encrypted suffered a ~NUMBER percentage more latency, while the Max increased by ~4.5 percent.
-  \item \textbf{Threads Fairness:} The number of events per thread, were ~NUMBER percent higher in a Not-Encrypted system than in an Encrypted one.
+  \item \textbf{Files Operations:} Reads, Writes, and File Sync operations suffered a ~63.3 percent due to encryption.
+  \item \textbf{Throughput:} Lost a ~63.3 percentage both at write and read operations while Encrypting.
+  \item \textbf{General Statistics:} The number of events compared with the total time for them to occur shows that, in the same amount of time, ~172.35 percentage more events happened at the Not-Encrypted OS.
+  \item \textbf{Latency:} In the same period, the average between the Encrypted vs. Not-Encrypted suffered a ~63.25 percentage more latency, while the Max increased by ~51.46 percent.
+  \item \textbf{Threads Fairness:} The number of events per thread were ~33.72 percent higher in a Not-Encrypted system than in an Encrypted one.
 \end{itemize}
 \vspace*{-\baselineskip}
 
 \newpage
-\subsubsection{Virtual Drive SSD NVMe Conclusions - Pros and Cons}
+\subsubsection{Baremetal M.2 NVMe Conclusions - Pros and Cons}
 \begin{itemize}
-  \item First
-  \item Second
-  \item Third
+  \item The CPU impact is tolerable, while the I/O operations suffer a drastic payload due to encryption - 63 percent average -. 
+  \item Latencies dramatically increased at the Encrypted OS.
+  \item Since the NVMe devices have higher throughout values than traditional SATA drives, the I/O operations - even though encrypted - are still tolerable and unnoticed.
 \end{itemize}
